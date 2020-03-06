@@ -1,0 +1,116 @@
+1. literals:
+	<div class="val"> [literal] </div>
+2. variable binding:
+	<div class="let" id=[variable name]> [expr] [expr] </div>
+3. variable use:
+	<div class="var"> [variable name] </div>
+4. function:
+	<div class="function"> [expr] </div>
+5. argument:
+	<div class="argument" />
+6. function call:
+	<div class="call">
+		[function expr]
+		[expr]
+	</div>
+7. condition:
+	<div class="if">
+		[condition expr]
+		[then expr]
+		[else expr]
+	</div>
+8. operators:
+	unary:
+		<div class="add"> [expr] </div>
+		<div class="minus"> [expr] </div>
+		<div class="negate"> [expr] </div>
+		<div class="increment"> [expr] </div>
+		<div class="decrement"> [expr] </div>
+		<div class="car"> [pair expr] </div>
+		<div class="cdr"> [pair expr] </div>
+	binary:
+		<div class="minus"> [expr] [expr] </div>
+		<div class="divide"> [expr] [expr] </div>
+		<div class="intdivide"> [expr] [expr] </div>
+		<div class="modulus"> [expr] [expr] </div>
+		<div class="equals?"> [expr] [expr] </div>
+		<div class="larger?"> [expr] [expr] </div>
+		<div class="smaller?"> [expr] [expr] </div>
+		<div class="notlarger?"> [expr] [expr] </div>
+		<div class="notsmaller?"> [expr] [expr] </div>
+	multiple:
+		<div class="add"> [expr] ... [expr] </div>
+		<div class="multiply"> [expr] ... [expr] </div>
+		<div class="and"> [expr] ... [expr] </div>
+		<div class="or"> [expr] ... [expr] </div>
+9. collections:
+	pair:
+		<div class="pair"> [expr] [expr] </div>
+	list:
+		<div class="list"> [expr]* </div>
+10. IO
+	input:
+		<div class="in" id="variable name"> [prompt] </div>
+	output:
+		<div class="out"> [expr] </div>
+
+<div class="out">
+	<div class="val">"Hello world\n"</div>
+</div>
+		
+<div class="in" id="a">Please input the first number:</div>
+<div class="in" id="b">Please input the second number:</div>
+<div class="out">
+	<div class="add">
+		<div class="val">"The gcd is: "</div>
+		<div class="let" id="av">
+			<div class="add">
+				<div class="var">a</div>
+			</div>
+			<div class="let" id="bv">
+				<div class="add">
+					<div class="var">b</div>
+				</div>
+				<div class="let" id="gcd">
+					<div class="function">
+						<div class="if">
+							<div class="equals?">
+								<div class="cdr">
+									<div class="argument" />
+								</div>
+								<div class="val">0</div>
+							</div>
+							<div class="car">
+								<div class="argument" />
+							</div>
+							<div class="call">
+								<div class="var">gcd</div>
+								<div class="pair">
+									<div class="cdr">
+										<div class="argument" />
+									</div>
+									<div class="modulus">
+										<div class="car">
+											<div class="argument" />
+										</div>
+										<div class="cdr">
+											<div class="argument" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="call">
+						<div class="var">gcd</div>
+						<div class="pair">
+							<div class="var">av</div>
+							<div class="var">bv</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
