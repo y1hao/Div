@@ -1,7 +1,8 @@
 1. literals:
 	<div class="val"> [literal] </div>
 2. variable binding:
-	<div class="let" id=[variable name]> [expr] [expr] </div>
+	<div class="scope"> [binding]* [expr] </div>
+	<div class="define" id=[variable name]> [expr] </div>
 3. variable use:
 	<div class="var"> [variable name] </div>
 4. function:

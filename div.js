@@ -1,33 +1,27 @@
-const environment = new Map()
+const global = new Map()
 const statements = new Array()
-let outBegin = false
 const error = (e) => document.writeln("<p style='color:red'>ERROR: " + e + "</p>")
+const TYPE = {
+    "":""
+}
+const type = (div) => div.tagName == "div" ? div.className : TYPE[div.tagName]
 
 function eval_statements() {
     if (statements.length == 0)
         return
-    if (statements[0].className == "out")
-        outBegin = true
-    if (outBegin) {
-        if (statements[0].className != "out") {
-            error("out statement expected, " + statements[0].className + " was given")
-            return
-        }
+    const keyword = type(statements[0])
+    if (keyword == "in")
+        eval_in()
+    else if (keyword == "out")
         eval_out(statements[0])
-    }
-    else {
-        if (statements[0].className != "in") {
-            error("in statement expected, " + statements[0].className + " was given")
-            return
-        }
-        eval_in(statements[0])
-    }
+    else
+        error("in / out statement expected, " + keyword + " was given")
 }
 
 function next() {
     const inputList = document.getElementsByTagName("input")
     const input = inputList[inputList.length - 1]
-    environment.set(input.name, input.value)
+    global.set(input.name, ["value", input.value])
     input.removeAttribute("onchange")
     statements.splice(0, 1)
     eval_statements()
@@ -41,94 +35,206 @@ function eval_in(div) {
 }
 
 function eval_out(div) {
-    const res = eval_expr(div.children[0], environment)
-    document.writeln("<p>" + res + "</p>")
+    let res
+    try {
+        res = eval_expr(parse_expr(div.children[0], global))
+    }
+    catch(e) {
+        error(e.message)
+    }
+    print(res)
+    statements.splice(0, 1)
+    eval_statements()
 }
 
-function eval_expr(div, env) {
-    switch (div.className) {
-        case "val": 
-            return eval_val(div)
-        case "let": 
-            return eval_let(div, env)
-        case "var": 
-            return eval_var(div, env)
+function print(expr) {
+    document.writeln("<p>" + expr[1] + "</p>")
+}
+
+function parse_expr(div) {
+    switch (type(div)) {
+        case "value": 
+            return parse_value(div)
+        case "scope": 
+            return parse_scope(div)
+        case "define": 
+            return parse_define(div)
+        case "variable": 
+            return parse_variable(div)
         case "function": 
-            return eval_function(div, env)
+            return parse_function(div)
         case "argument": 
-            return eval_argument(div, env)
+            return parse_argument(div)
         case "call": 
-            return eval_call(div, env)
-        case "if": 
-            return eval_if(div, env)
+            return parse_call(div)
+        case "condition": 
+            return parse_condition(div)
         case "pair": 
-            return eval_pair(div, env)
+            return parse_pair(div)
         case "list": 
-            return eval_list(div, env)
-        case "positive": case "negative": case "not": case "increment":
-        case "decrement": case "null?": case "car": case "cdr":
-            return eval_unary(div, env)
-        case "minus": case "divide": case "intdivide": case "modulus": case "equal?":
-        case "larger?": case "smaller?": case "notlarger?": case "notsmaller?":
-            return eval_binary(div, env)
-        case "add": case "multiply": case "and": case "or":
-            return eval_multiple(div, env)
+            return parse_list(div)
+        case "operator":
+            return parse_operator(div)
         default:
-            error("the class name '" + div.className + "' is not supported")
+            throw "the key word '" + div.className + "' is not supported"
     }
 }
 
-function eval_val(div) {
+function eval_expr(expr, env) {
+    switch(expr[0]) {
+        case "value": 
+            return eval_value(expr)
+        case "scope": 
+            return eval_scope(expr, env)
+        case "define": 
+            return eval_define(expr, env)
+        case "variable": 
+            return eval_variable(expr, env)
+        case "function": 
+            return eval_function(expr, env)
+        case "argument": 
+            return eval_argument(expr, env)
+        case "call": 
+            return eval_call(expr, env)
+        case "condition": 
+            return eval_condition(expr, env)
+        case "pair": 
+            return eval_pair(expr, env)
+        case "list": 
+            return eval_list(expr, env)
+        case "operator":
+            return eval_operator(expr, env)
+    }
+}
+
+function eval_value(expr) {
+    return expr
+}
+
+function eval_scope(expr, env) {
+    const new_env = new Map()
+    for (let [k, v] of env)
+        new_env.set(k, new Array(v))
+    for (let i = 1; i < expr.length - 1; ++i) {
+        if (expr[i][0] != "define")
+            throw "define expression expected, " + expr[i][0] + " was given"
+        eval_expr(expr[i], new_env)
+    }
+    return eval_expr(expr[expr.length - 1], new_env)
+}
+
+function eval_define(expr, env) {
+    const value = eval_expr(expr[2], env)
+    env.set(expr[1], value)
+    return value
+}
+
+function eval_variable(expr, env) {
+    if (!env.has(expr[1]))
+        throw "The variable " + expr[0] + " has not been defined in this scope"
+    return env.get(expr[1])
+}
+
+function eval_function(expr, env) {
+    
+}
+
+function eval_argument(expr, env) {
+
+}
+
+function eval_call(expr, env) {
+
+}
+
+function eval_condition(expr, env) {
+
+}
+
+function eval_unary(expr, env) {
+
+}
+
+function eval_binary(expr, env) {
+
+}
+
+function eval_multiple(expr, env) {
+
+}
+
+function eval_pair(expr, env) {
+
+}
+
+function eval_list(expr, env) {
+
+}
+
+
+function parse_value(div) {
     const val = div.textContent
-    if (val.length >= 2 && val[0] == '"' && val[val.length - 1] == '"')
-        return val.substring(1, val.length - 1)
+    if (val.length >= 2 && val.startsWith('"') && val.endsWith('"'))
+        return ["val", val.substring(1, val.length - 1)]
+    val = val.trim()
+    if (val == "true")
+        return ["val", true]
+    if (val == "false")
+        return ["val", false]
+    if (val == "null")
+        return ["val", null]
     const num = Number(val)
     if (!isNaN(num))
-        return num
-    return val
+        return ["val", num]
+    throw val + " is not a valid value for val expressoin"
 }
 
-function eval_let(div, env) {
 
+function parse_scope(div) {
+    
 }
 
-function eval_var(div, env) {
-
-}
-
-function eval_function(div, env) {
+function parse_define(div) {
 
 }
 
-function eval_argument(div, env) {
+function parse_variable(div) {
 
 }
 
-function eval_call(div, env) {
+function parse_function(div) {
 
 }
 
-function eval_if(div, env) {
+function parse_argument(div) {
 
 }
 
-function eval_unary(div, env) {
+function parse_call(div) {
 
 }
 
-function eval_binary(div, env) {
+function parse_condition(div) {
 
 }
 
-function eval_multiple(div, env) {
+function parse_unary(div) {
 
 }
 
-function eval_pair(div, env) {
+function parse_binary(div) {
 
 }
 
-function eval_list(div, env) {
+function parse_multiple(div) {
+
+}
+
+function parse_pair(div) {
+
+}
+
+function parse_list(div) {
 
 }
 

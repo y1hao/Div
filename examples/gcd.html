@@ -8,49 +8,47 @@
         <div class="in" id="a">Please input the first number:</div>
         <div class="in" id="b">Please input the second number:</div>
         <div class="out">
-            <div class="add">
+            <div class="operator" title="add">
                 <div class="val">"The gcd is: "</div>
-                <div class="let" id="av">
-                    <div class="var">a</div>
-                    <div class="let" id="bv">
-                        <div class="var">b</div>
-                        <div class="let" id="gcd">
-                            <div class="function">
-                                <div class="if">
-                                    <div class="equals?">
-                                        <div class="cdr">
-                                            <div class="argument"></div>
-                                        </div>
-                                        <div class="val">0</div>
-                                    </div>
+                <div class="scope">
+                    <div class="define" id="gcd">
+                        <div class="function">
+                            <div class="scope">
+                                <div class="define" id="first">
                                     <div class="car">
                                         <div class="argument"></div>
                                     </div>
+                                </div>
+                                <div class="define" id="second">
+                                    <div class="cdr">
+                                        <div class="argument"></div>
+                                    </div>
+                                </div>
+                                <div class="condition">
+                                    <div class="operator" title="equal?">
+                                        <div class="var">second</div>
+                                        <div class="val">0</div>
+                                    </div>
+                                    <div class="var">first</div>
                                     <div class="call">
                                         <div class="var">gcd</div>
                                         <div class="pair">
-                                            <div class="cdr">
-                                                <div class="argument"></div>
-                                            </div>
-                                            <div class="modulus">
-                                                <div class="car">
-                                                    <div class="argument"></div>
-                                                </div>
-                                                <div class="cdr">
-                                                    <div class="argument"></div>
-                                                </div>
+                                            <div class="var">second</div>
+                                            <div class="operator" title="modulus">
+                                                <div class="var">first</div>
+                                                <div class="var">second</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="call">
-                                <div class="var">gcd</div>
-                                <div class="pair">
-                                    <div class="var">av</div>
-                                    <div class="var">bv</div>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
+                    <div class="call">
+                        <div class="var">gcd</div>
+                        <div class="pair">
+                            <div class="var">a</div>
+                            <div class="var">b</div>
                         </div>
                     </div>
                 </div>
