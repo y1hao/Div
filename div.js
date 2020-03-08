@@ -1,6 +1,20 @@
+// The div Programing Language
+// v 0.1.0
+//
+// Yihao Wang
+// 8/3/2020
+
+// the global environment
 const global = new Map()
+
+// the list of elements contained in the <body> element, representing the top level statements
 const statements = new Array()
+
+// display error message
 const error = (e) => document.writeln("<p style='color:red'>ERROR: " + e + "</p>")
+
+// get the expression/statement type from an element
+// if the element is a div, then return its class name, else map tag name to the type
 const TYPE = {
     "cite":       "in",
     "main":       "out",
@@ -15,6 +29,10 @@ const TYPE = {
 const type = (div) => div.tagName.toLowerCase() == "div" 
                     ? div.className.toLowerCase() 
                     : TYPE[div.tagName.toLowerCase()]
+
+// deep copy an environment
+// no need to deep copy each value in the environment, as they are immutable
+// used when creating a new scope
 const copy = (map) => {
     let res = new Map()
     for (let [k, v] of map)
@@ -22,6 +40,7 @@ const copy = (map) => {
     return res
 }
 
+// evaluate the first statement in the statement list
 function eval_statements() {
     if (statements.length == 0)
         return
@@ -34,6 +53,21 @@ function eval_statements() {
         error("in / out statement expected, " + keyword + " was given")
 }
 
+// evaluating an in statement displays the prompt onto the document
+// and creates an input element, which, once something gets inputed,
+// calls the next() function, to continue the evaluation
+function eval_in(div) {
+    const name = div.id
+    const prompt = div.textContent
+    document.writeln("<p><label style='color:dimgray;white-space:pre'>" + prompt + "</label>")
+    document.writeln("<input style='color:limegreen' onchange='next()' name='" + name +"'></input></p>")
+    inputList = document.getElementsByTagName("input")
+    inputList[inputList.length - 1].focus()
+}
+
+// get called when user input something to the input element
+// it creates a variable binding to the global environment
+// and go on to evalute the rest statements
 function next() {
     const inputList = document.getElementsByTagName("input")
     const input = inputList[inputList.length - 1]
@@ -44,15 +78,7 @@ function next() {
     eval_statements()
 }
 
-function eval_in(div) {
-    const name = div.id
-    const prompt = div.textContent
-    document.writeln("<p><label style='color:dimgray;white-space:pre'>" + prompt + "</label>")
-    document.writeln("<input style='color:limegreen' onchange='next()' name='" + name +"'></input></p>")
-    inputList = document.getElementsByTagName("input")
-    inputList[inputList.length - 1].focus()
-}
-
+// evaluate the out statement
 function eval_out(div) {
     let res
     if (div.children.length != 1)
@@ -68,10 +94,12 @@ function eval_out(div) {
     eval_statements()
 }
 
+// display the result on the document
 function print(expr) {
     document.writeln("<p style='white-space:pre'>" + get_display(expr) + "</p>")
 }
 
+// format an expression to a displayable string
 function get_display(expr) {
     switch (expr[0]) {
         case "value":
@@ -95,6 +123,14 @@ function get_display(expr) {
     }
 }
 
+// parse an html element to an expression
+// an expression is represented by a js Array,
+// with the first element being a string representing the expression type,
+// and the contents are represented by the rest elements in the Array
+// e.g. ["value", 3], and
+//      ["condition", 
+//        ["operator", "equal?", ["value", 3], ["value", 5]], 
+//        ["value", "3 == 5"], ["value", "3 != 5"]]
 function parse_expr(div) {
     switch (type(div)) {
         case "value": 
@@ -122,6 +158,7 @@ function parse_expr(div) {
     }
 }
 
+// evaluate a parsed expression
 function eval_expr(expr, env) {
     switch(expr[0]) {
         case "value": 
@@ -149,10 +186,16 @@ function eval_expr(expr, env) {
     }
 }
 
+// value expression: ["value", <literal>]
+// evaluates to itself
 function eval_value(expr) {
     return expr
 }
 
+// scope expression: 
+// ["scope", <define expression>* , <expression>]
+// creates a new environment, evaluates each contained expression in order
+// the evaluation result is the value of the last expression
 function eval_scope(expr, env) {
     const new_env = copy(env)
     for (let i = 1; i < expr.length - 1; ++i) {
@@ -163,34 +206,58 @@ function eval_scope(expr, env) {
     return eval_expr(expr[expr.length - 1], new_env)
 }
 
+// define expression: ["define", <identifier>, <expression>]
+// evalates the last expression, then binds the identifier to the result,
+// and add to the current environment
+// the evaluation result is the value of the last expression
 function eval_define(expr, env) {
     const value = eval_expr(expr[2], env)
     env.set(expr[1], value)
     return value
 }
 
+// variable expression: ["variable", <identifier>]
+// look up the identifier in the current environment
+// the evaluation result is the value found
 function eval_variable(expr, env) {
     if (!env.has(expr[1]))
         throw "The variable " + expr[1] + " has not been defined in this scope"
     return env.get(expr[1])
 }
 
+// function expression: ["function", <identifier>, <expression>]
+// evaluating a function expression creates a closure expression:
+// ["closure", <identifier>, <expression>, <environment>]
+// first copy the current environment, then add this environment with other parts from
+// the function expression to make a closure expression,
+// and finally binds the identifier to the closure expression itself and adds it to
+// the environment of the closure
+// this allows recursive functions
+// note that if the identifier is not given, then it is not added to the environment
+// evaluating a function expression will not excute the expression within the function
 function eval_function(expr, env) {
     const environment = copy(env)
     const closure = ["closure", expr[1], expr[2], environment]
-    if (expr[1] != "___ANONYMOUS___")
+    if (expr[1] !== null)
         environment.set(expr[1], closure)
     return closure
 }
 
+// a closure expression evaluates to itself
 function eval_closure(expr) {
     return expr
 }
 
+// argument expression: ["argument"]
+// look up the identifier "___ARGUMENT___" from environment
 function eval_argument(env) {
     return env.get("___ARGUMENT___")
 }
 
+// call expression: ["call", <function expression>, <expression>]
+// first evaluate the function expression to a closure
+// then evaluate the last expression, bind the result to "___ARGURMENT___" and add to
+// the closure's environment, and then evaluate the expression within the closure
 function eval_call(expr, env) {
     const func = eval_expr(expr[1], env)
     if (func[0] != "closure")
@@ -201,6 +268,12 @@ function eval_call(expr, env) {
     return eval_expr(func[2], new_env)
 }
 
+// condition expression: ["condition", <expression>, <expression>, <expression>?]
+// first evaluate the first expression, if the result is a value, and its value is
+// convertible to true according to js rules, then evalute the second expression,
+// otherwise evalute the third expression
+// the third expression can be ommitted
+// if the third expression is ommitted but the first expression evaluates to false, return null
 function eval_condition(expr, env) {
     const condition = eval_expr(expr[1], env)
     if (condition[0] != "value")
@@ -213,6 +286,8 @@ function eval_condition(expr, env) {
         return ["value", null]
 }
 
+// operator expression: ["operator", <operator name>, <expression>, <expression>?]
+// evaluate the expression(s), and then conduct the operation on them(it)
 function eval_operator(expr, env) {
     switch (expr[1]) {
         case "positive": case "negative": case "not": case "pair?":
@@ -312,17 +387,21 @@ function eval_binary(expr, env) {
     }
 }
 
+// pair expression: ["pair", <expression>, <expression>]
+// evaluate the two expressions within the pair, the result is a reducted pair expression
 function eval_pair(expr, env) {
     const first = eval_expr(expr[1], env)
     const second = eval_expr(expr[2], env)
     return ["pair", first, second]
 }
 
+// parse an html element to a value
 function parse_value(div) {
     let value = div.textContent
     return ["value", parse_string(value)]
 }
 
+// parse a literal
 function parse_string(str) {
     if (str.length >= 2 && str.startsWith('"') && str.endsWith('"'))
         return str.substring(1, str.length - 1)
@@ -339,6 +418,7 @@ function parse_string(str) {
     return str
 }
 
+// parse an html element to a scope expression
 function parse_scope(div) {
     const children = div.children
     if (children.length == 0)
@@ -353,6 +433,7 @@ function parse_scope(div) {
     return res
 }
 
+// parse an html element to a define expression
 function parse_define(div) {
     const id = div.id
     if (div.children.length == 0)
@@ -360,24 +441,28 @@ function parse_define(div) {
     return ["define", id, parse_expr(div.children[0])]
 }
 
+// parse an html element to a variable expression
 function parse_variable(div) {
     const id = div.textContent.trim()
     return ["variable", id]
 }
 
+// parse an html element to a function expression
 function parse_function(div) {
     let id
     if (!div.hasAttribute("id"))
-        id = "___ANONYMOUS___"
+        id = null
     else
         id = div.id
     return ["function", id, parse_expr(div.children[0])]
 }
 
+// parse an html element to an argument expression
 function parse_argument() {
     return ["argument"]
 }
 
+// parse an html element to a call expression
 function parse_call(div) {
     const children = div.children
     if (children.length < 2)
@@ -385,6 +470,7 @@ function parse_call(div) {
     return ["call", parse_expr(children[0]), parse_expr(children[1])]
 }
 
+// parse an html element to a condition expression
 function parse_condition(div) {
     const children = div.children
     if (children.length == 2)
@@ -394,6 +480,7 @@ function parse_condition(div) {
     throw "a condition expression must have 2 or 3 elements"
 }
 
+// parse an html element to an operator expression
 function parse_operator(div) {
     const children = div.children
     if (!div.hasAttribute("title"))
@@ -404,6 +491,7 @@ function parse_operator(div) {
     return res
 }
 
+// parse an html element to a pair expression
 function parse_pair(div) {
     const children = div.children
     if (children.length != 2)
@@ -411,11 +499,12 @@ function parse_pair(div) {
     return ["pair", parse_expr(children[0]), parse_expr(children[1])]
 }
 
+// start to run the program
 window.onload = () => {
-    statementList = document.body.cloneNode(true).children
-    for (let i = 0; i < statementList.length; ++i)
-        if (statementList[i].tagName.toLowerCase() != 'script')
-            statements.push(statementList[i])
+    statement_list = document.body.cloneNode(true).children
+    for (let i = 0; i < statement_list.length; ++i)
+        if (statement_list[i].tagName.toLowerCase() != 'script')
+            statements.push(statement_list[i])
     document.body.innerHTML = ""
     eval_statements()
 }
