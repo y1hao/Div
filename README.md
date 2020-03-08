@@ -96,7 +96,7 @@ The `out statement` first evaluates the expression inside of it, and then displa
 The expressions are explained next.
 
 ### Expressions
-There are 9 expressions in div.
+There are 10 expressions in div.
 
 #### literal expression
 The `literal expression` is in the format:
@@ -169,6 +169,21 @@ or
 <label></label>
 ```
 The `argument expression` is a placeholder in the function body for the argument. It contains nothing, all contained elements or text will be ignored.
+
+#### condition expression
+The `condition expression` is in the format:
+```html
+<div class="condition"> [expression] [expression] [expression]? </div>
+```
+or
+```html
+<nav> [expression] [expression] [expression]? </nav>
+```
+The `condition expression` takes two or three `[expression]`s. It first evaluates the first one. This one must evaluates to a `literal expression`. If the value is convertible to true according to js rules, the value of the `condition expression` is the value of the second `[expression]`. Otherwise the value is the value of the third `[expression]`.
+
+Only one of the second and third `[expression]`s is evaluated.
+
+The third `[expression]` is optional. If the third `[expression]` is not given but the first `[expression]` evaluates to false, a `literal expression` with value `null` is the evaluating result.
 
 #### pair expression
 The `pair expression` is in the format:
