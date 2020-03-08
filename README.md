@@ -241,7 +241,7 @@ This [example](https://github.com/CoderYihaoWang/Div/blob/master/examples/loveyo
 ### Arrays
 What can I use when I need some data structure like an array, given that the only data structure is simply a pair?
 
-You can use nested pairs. [Here](https://github.com/CoderYihaoWang/Div/blob/master/examples/fibonacci.html) is an example displaying the first nth elements of the Fimonacci sequence onto the screen.
+You can use nested pairs. [Here](https://github.com/CoderYihaoWang/Div/blob/master/examples/fibonacci.html) is an example displaying the first nth elements of the Fibonacci sequence onto the screen.
 
 ### Multi-argument functions
 What can I do if I want to let the functions take multiple arguments, instead of only one?
