@@ -3,7 +3,7 @@
 ## Introduction
 People keep saying that html is a **markup** language, not a **programing** language. While this is true, it kinds of ignores the expressiveness of the html language. The tree structure of a DOM suits very well to the job of representing an astract syntax tree. 
 
-The div Programing Languange is an experiment which aims to illustrate the expressiveness of html. The so called div language is just a piece of js code which works as an interpreter. When you add this piece of code to an html5 file, it totally changes the semantics of all elements in the document, and turns the html file to a functional, lisp-like language.
+The **div Programing Languange** is an experiment which aims to illustrate the expressiveness of html. The so called div language is just a piece of js code which works as an interpreter. When you add this piece of code to an html5 file, it totally changes the semantics of all elements in the document, and turns the html file to a functional, lisp-like language.
 
 The js file is currently hosted on [CodePen](https://codepen.io/YihaoWang/pen/mdJqzyd), all you need to do is to add this tag to the `<head>` part of your html file:
 
