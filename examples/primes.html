@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>primes</title>
+        <script src="https://codepen.io/YihaoWang/pen/mdJqzyd.js"></script>
+    </head>
+    <body>
+        <cite id="count">Please input a positive integer: </cite>
+        <main>
+            <article>
+                <section id="from">
+                    <div class="function" id="f">
+                        <article>
+                            <section id="fa"><label></label></section>
+                            <aside>
+                                <a>fa</a>
+                                <div class="function">
+                                    <div class="call">
+                                        <a>f</a>
+                                        <div class="operator" title="increment"><a>fa</a></div>
+                                    </div>
+                                </div>
+                            </aside>
+                        </article>
+                    </div>
+                </section>
+                <section id="take">
+                    <div class="function" id="g">
+                        <article>
+                            <section id="ga"><label></label></section>
+                            <section id="n">
+                                <div class="operator" title="cdr"><a>ga</a></div>
+                            </section>
+                            <section id="l">
+                                <div class="operator" title="car"><a>ga</a></div>
+                            </section>
+                            <nav>
+                                <div class="operator" title="equal?"><a>n</a><i>0</i></div>
+                                <i>null</i>
+                                <aside>
+                                    <div class="operator" title="car"><a>l</a></div>
+                                    <div class="call">
+                                        <a>g</a>
+                                        <aside>
+                                            <div class="call">
+                                               <div class="operator" title="cdr"><a>l</a></div>
+                                               <i>null</i>
+                                            </div>
+                                            <div class="operator" title="decrement"><a>n</a></div>
+                                        </aside>
+                                    </div>
+                                </aside>
+                            </nav>
+                        </article>
+                    </div>
+                </section>
+                <section id="sift">
+                    <div class="function">
+                        <article>
+                            <section id="p"><label></label></section>
+                            <div class="function" id="h">
+                                <article>
+                                    <section id="lst"><label></label></section>
+                                    <section id="hd"><div class="operator" title="car"><a>lst</a></div></section>
+                                    <section id="tl">
+                                        <div class="call">
+                                            <div class="operator" title="cdr"><a>lst</a></div>
+                                            <i>null</i>
+                                        </div>
+                                    </section>
+                                    <nav>
+                                        <div class="operator" title="equal?">
+                                            <div class="operator" title="modulus">
+                                                <a>hd</a><a>p</a>
+                                            </div>
+                                            <i>0</i>
+                                        </div>
+                                        <div class="call">
+                                            <a>h</a>
+                                            <a>tl</a>
+                                        </div>
+                                        <aside>
+                                            <a>hd</a>
+                                            <div class="function">
+                                                <div class="call">
+                                                    <a>h</a>
+                                                    <a>tl</a>  
+                                                </div>
+                                            </div>
+                                        </aside>
+                                    </nav>
+                                </article>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                <section id="sieve">
+                    <div class="function" id="i">
+                        <article>
+                            <section id="ia"><label></label></section>
+                            <section id="head"><div class="operator" title="car"><a>ia</a></div></section>
+                            <section id="tail">
+                                <div class="call">
+                                    <div class="operator" title="cdr"><a>ia</a></div>
+                                    <i>null</i>
+                                </div> 
+                            </section>
+                            <aside>
+                                <a>head</a>
+                                <div class="function">
+                                    <div class="call">
+                                        <a>i</a>
+                                        <div class="call">
+                                            <div class="call">
+                                                <a>sift</a>
+                                                <a>head</a>
+                                            </div>
+                                            <a>tail</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aside>
+                        </article>
+                    </div>
+                </section>
+                <div class="call">
+                    <a>take</a>
+                    <aside>
+                        <div class="call">
+                            <a>sieve</a>
+                            <div class="call">
+                                <a>from</a>
+                                <i>2</i>
+                            </div>
+                        </div>
+                        <a>count</a>
+                    </aside>
+                </div>    
+            </article>    
+        </main>
+    </body>      
+</html>

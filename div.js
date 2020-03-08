@@ -47,7 +47,7 @@ function next() {
 function eval_in(div) {
     const name = div.id
     const prompt = div.textContent
-    document.writeln("<p><label style='color:dimgray'>" + prompt + "</label>")
+    document.writeln("<p><label style='color:dimgray;white-space:pre'>" + prompt + "</label>")
     document.writeln("<input style='color:limegreen' onchange='next()' name='" + name +"'></input></p>")
     inputList = document.getElementsByTagName("input")
     inputList[inputList.length - 1].focus()
@@ -55,6 +55,8 @@ function eval_in(div) {
 
 function eval_out(div) {
     let res
+    if (div.children.length != 1)
+        error("the out statement only takes exactly 1 element, " + div.children.length + " was given")
     try {
         res = eval_expr(parse_expr(div.children[0]), global)
     }
@@ -412,7 +414,8 @@ function parse_pair(div) {
 window.onload = () => {
     statementList = document.body.cloneNode(true).children
     for (let i = 0; i < statementList.length; ++i)
-        statements.push(statementList[i])
+        if (statementList[i].tagName.toLowerCase() != 'script')
+            statements.push(statementList[i])
     document.body.innerHTML = ""
     eval_statements()
 }
