@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>gcd</title>
+        <script src="../div.js"></script>
+    </head>
+    <body>
+        <div class="in" id="a">Please input the first number:</div>
+        <div class="in" id="b">Please input the second number:</div>
+        <div class="out">
+            <div class="value">"The gcd is: "</div>
+        </div>
+        <div class="out">
+            <div class="call">
+                <div class="function" id="gcd">
+                    <div class="scope">
+                        <div class="define" id="first">
+                            <div class="operator" title="car">
+                                <div class="argument"></div>
+                            </div>
+                        </div>
+                        <div class="define" id="second">
+                            <div class="operator" title="cdr">
+                                <div class="argument"></div>
+                            </div>
+                        </div>
+                        <div class="condition">
+                            <div class="operator" title="equal?">
+                                <div class="variable">second</div>
+                                <div class="value">0</div>
+                            </div>
+                            <div class="variable">first</div>
+                            <div class="call">
+                                <div class="variable">gcd</div>
+                                <div class="pair">
+                                    <div class="variable">second</div>
+                                    <div class="operator" title="modulus">
+                                        <div class="variable">first</div>
+                                        <div class="variable">second</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pair">
+                    <div class="variable">a</div>
+                    <div class="variable">b</div>
+                </div>
+            </div>
+        </div>
+    </body>      
+</html>

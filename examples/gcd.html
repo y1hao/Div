@@ -5,54 +5,27 @@
         <script src="../div.js"></script>
     </head>
     <body>
-        <div class="in" id="a">Please input the first number:</div>
-        <div class="in" id="b">Please input the second number:</div>
-        <div class="out">
-            <div class="operator" title="add">
-                <div class="val">"The gcd is: "</div>
-                <div class="scope">
-                    <div class="define" id="gcd">
-                        <div class="function">
-                            <div class="scope">
-                                <div class="define" id="first">
-                                    <div class="car">
-                                        <div class="argument"></div>
-                                    </div>
-                                </div>
-                                <div class="define" id="second">
-                                    <div class="cdr">
-                                        <div class="argument"></div>
-                                    </div>
-                                </div>
-                                <div class="condition">
-                                    <div class="operator" title="equal?">
-                                        <div class="var">second</div>
-                                        <div class="val">0</div>
-                                    </div>
-                                    <div class="var">first</div>
-                                    <div class="call">
-                                        <div class="var">gcd</div>
-                                        <div class="pair">
-                                            <div class="var">second</div>
-                                            <div class="operator" title="modulus">
-                                                <div class="var">first</div>
-                                                <div class="var">second</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+        <cite id="a">Please input the first number:</cite>
+        <cite id="b">Please input the second number:</cite>
+        <main><i>"The gcd is: "</i></main>
+        <main>
+            <div class="call">
+                <div class="function" id="gcd">
+                    <article>
+                        <section id="first"><div class="operator" title="car"><label></label></div></section>
+                        <section id="second"><div class="operator" title="cdr"><label></label></div></section>
+                        <nav>
+                            <div class="operator" title="equal?"><a>second</a><i>0</i></div>
+                            <a>first</a>
+                            <div class="call">
+                                <a>gcd</a>
+                                <aside><a>second</a><div class="operator" title="modulus"><a>first</a><a>second</a></div></aside>
                             </div>
-                        </div>
-                    </div>
-                    <div class="call">
-                        <div class="var">gcd</div>
-                        <div class="pair">
-                            <div class="var">a</div>
-                            <div class="var">b</div>
-                        </div>
-                    </div>
+                        </nav>
+                    </article>
                 </div>
+                <aside><a>a</a><a>b</a></aside>
             </div>
-        </div>
+        </main>
     </body>      
 </html>

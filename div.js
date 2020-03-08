@@ -2,11 +2,25 @@ const global = new Map()
 const statements = new Array()
 const error = (e) => document.writeln("<p style='color:red'>ERROR: " + e + "</p>")
 const TYPE = {
-    "":""
+    "cite":       "in",
+    "main":       "out",
+    "i":          "value",
+    "a":          "variable",
+    "label":      "argument",
+    "aside":      "pair",
+    "article":    "scope",
+    "section":    "define",
+    "nav":        "condition"
 }
 const type = (div) => div.tagName.toLowerCase() == "div" 
                     ? div.className.toLowerCase() 
                     : TYPE[div.tagName.toLowerCase()]
+const copy = (map) => {
+    let res = new Map()
+    for (let [k, v] of map)
+        res.set(k, v)
+    return res
+}
 
 function eval_statements() {
     if (statements.length == 0)
@@ -23,8 +37,9 @@ function eval_statements() {
 function next() {
     const inputList = document.getElementsByTagName("input")
     const input = inputList[inputList.length - 1]
-    global.set(input.name, ["value", input.value])
+    global.set(input.name, ["value", parse_string(input.value)])
     input.removeAttribute("onchange")
+    input.setAttribute("disabled", "disabled")
     statements.splice(0, 1)
     eval_statements()
 }
@@ -32,8 +47,10 @@ function next() {
 function eval_in(div) {
     const name = div.id
     const prompt = div.textContent
-    document.writeln("<label>" + prompt + "</label>")
-    document.writeln("<input onchange='next()' name='" + name +"'></input><br>")
+    document.writeln("<p><label style='color:dimgray'>" + prompt + "</label>")
+    document.writeln("<input style='color:limegreen' onchange='next()' name='" + name +"'></input></p>")
+    inputList = document.getElementsByTagName("input")
+    inputList[inputList.length - 1].focus()
 }
 
 function eval_out(div) {
@@ -50,7 +67,30 @@ function eval_out(div) {
 }
 
 function print(expr) {
-    document.writeln("<p>" + expr[1] + "</p>")
+    document.writeln("<p style='white-space:pre'>" + get_display(expr) + "</p>")
+}
+
+function get_display(expr) {
+    switch (expr[0]) {
+        case "value":
+            if (expr[1] === true || expr[1] === false)
+                return "<span style='color:darkorange'>" + expr[1] + "</span>"
+            if (expr[1] === null)
+                return "<span style='color:gray'>" + expr[1] + "</span>"
+            if (expr[1] === +expr[1])
+                return "<span style='color:indigo'>" + expr[1] + "</span>"
+            return "<span style='color:dodgerblue'>'" 
+                    + expr[1].replace(/\\n/g, "</span><br><span style='color:dodgerblue'>") 
+                    + "'</span>"
+        case "closure":
+            return "<span style='color:darkcyan'>[function]</span>"
+        case "pair":
+            return "<span style='color:green'>( </span>"
+                + get_display(expr[1])
+                + "<span style='color:green'> , </span>"
+                + get_display(expr[2])
+                + "<span style='color:green'> )</span>"
+    }
 }
 
 function parse_expr(div) {
@@ -66,7 +106,7 @@ function parse_expr(div) {
         case "function": 
             return parse_function(div)
         case "argument": 
-            return parse_argument(div)
+            return parse_argument()
         case "call": 
             return parse_call(div)
         case "condition": 
@@ -112,9 +152,7 @@ function eval_value(expr) {
 }
 
 function eval_scope(expr, env) {
-    const new_env = new Map()
-    for (let [k, v] of env)
-        new_env.set(k, new Array(v))
+    const new_env = copy(env)
     for (let i = 1; i < expr.length - 1; ++i) {
         if (expr[i][0] != "define")
             throw "define expression expected, " + expr[i][0] + " was given"
@@ -136,9 +174,7 @@ function eval_variable(expr, env) {
 }
 
 function eval_function(expr, env) {
-    const environment = new Map()
-    for (let [k, v] in env)
-        environment.set(k, v)
+    const environment = copy(env)
     const closure = ["closure", expr[1], expr[2], environment]
     if (expr[1] != "___ANONYMOUS___")
         environment.set(expr[1], closure)
@@ -158,8 +194,9 @@ function eval_call(expr, env) {
     if (func[0] != "closure")
         throw func[0] + " is not callable"
     const argument = eval_expr(expr[2], env)
-    func[3].set("___ARGUMENT___", argument)
-    return eval_expr(func[2], func[3])
+    const new_env = copy(func[3])
+    new_env.set("___ARGUMENT___", argument)
+    return eval_expr(func[2], new_env)
 }
 
 function eval_condition(expr, env) {
@@ -170,6 +207,8 @@ function eval_condition(expr, env) {
         return eval_expr(expr[2], env)
     else if (expr.length == 4)
         return eval_expr(expr[3], env)
+    else
+        return ["value", null]
 }
 
 function eval_operator(expr, env) {
@@ -243,31 +282,31 @@ function eval_binary(expr, env) {
         throw "the operator " + expr[0] + " can only be applied to values, " + first[0] + " was given"
     switch (expr[1]) {
         case "add": 
-            return ["value", first + second]
+            return ["value", first[1] + second[1]]
         case "minus": 
-            return ["value", first - second]
+            return ["value", first[1] - second[1]]
         case "multiply": 
-            return ["value", first * second]
+            return ["value", first[1] * second[1]]
         case "divide": 
-            return ["value", first / second]
+            return ["value", first[1] / second[1]]
         case "intdevide":
-            return ["value", Math.floor(first / second)]
+            return ["value", Math.floor(first[1] / second[1])]
         case "modulus":  
-            return ["value", first % second]
+            return ["value", first[1] % second[1]]
         case "and": 
-            return ["value", first && second]
+            return ["value", first[1] && second[1]]
         case "or": 
-            return ["value", first || second]
+            return ["value", first[1] || second[1]]
         case "equal?":
-            return ["value", first === second]
+            return ["value", first[1] === second[1]]
         case "larger?": 
-            return ["value", first > second]
+            return ["value", first[1] > second[1]]
         case "smaller?":
-            return ["value", first < second]
+            return ["value", first[1] < second[1]]
         case "notlarger?": 
-            return ["value", first <= second]
+            return ["value", first[1] <= second[1]]
         case "notsmaller?":
-            return ["value", first >= second]
+            return ["value", first[1] >= second[1]]
     }
 }
 
@@ -279,19 +318,23 @@ function eval_pair(expr, env) {
 
 function parse_value(div) {
     let value = div.textContent
-    if (value.length >= 2 && value.startsWith('"') && value.endsWith('"'))
-        return ["value", value.substring(1, value.length - 1)]
-    value = value.trim()
-    if (value == "true")
-        return ["value", true]
-    if (value == "false")
-        return ["value", false]
-    if (value == "null")
-        return ["value", null]
-    const number = Number(value)
+    return ["value", parse_string(value)]
+}
+
+function parse_string(str) {
+    if (str.length >= 2 && str.startsWith('"') && str.endsWith('"'))
+        return str.substring(1, str.length - 1)
+    str = str.trim()
+    if (str == "true")
+        return true
+    if (str == "false")
+        return false
+    if (str == "null")
+        return null
+    const number = Number(str)
     if (!isNaN(number))
-        return ["value", number]
-    return ["value", value]
+        return number
+    return str
 }
 
 function parse_scope(div) {
@@ -309,35 +352,61 @@ function parse_scope(div) {
 }
 
 function parse_define(div) {
-
+    const id = div.id
+    if (div.children.length == 0)
+        throw "empty define for " + id
+    return ["define", id, parse_expr(div.children[0])]
 }
 
 function parse_variable(div) {
-
+    const id = div.textContent.trim()
+    return ["variable", id]
 }
 
 function parse_function(div) {
-
+    let id
+    if (!div.hasAttribute("id"))
+        id = "___ANONYMOUS___"
+    else
+        id = div.id
+    return ["function", id, parse_expr(div.children[0])]
 }
 
-function parse_argument(div) {
-
+function parse_argument() {
+    return ["argument"]
 }
 
 function parse_call(div) {
-
+    const children = div.children
+    if (children.length < 2)
+        throw "a call expression must have a function and an argument"
+    return ["call", parse_expr(children[0]), parse_expr(children[1])]
 }
 
 function parse_condition(div) {
-
+    const children = div.children
+    if (children.length == 2)
+        return ["condition", parse_expr(children[0]), parse_expr(children[1])]
+    if (children.length == 3)
+        return ["condition", parse_expr(children[0]), parse_expr(children[1]), parse_expr(children[2])]
+    throw "a condition expression must have 2 or 3 elements"
 }
 
 function parse_operator(div) {
-
+    const children = div.children
+    if (!div.hasAttribute("title"))
+        throw "the title of the operator has not been given"
+    const res = ["operator", div.getAttribute("title")]
+    for (let i = 0; i < children.length; ++i)
+        res.push(parse_expr(children[i]))
+    return res
 }
 
 function parse_pair(div) {
-
+    const children = div.children
+    if (children.length != 2)
+        throw "the pair expression must take two elements"
+    return ["pair", parse_expr(children[0]), parse_expr(children[1])]
 }
 
 window.onload = () => {
