@@ -34,7 +34,7 @@ You can also use other tags than `<div>`s, as a short cut. For example, the `<bo
 <main><i>"hello world"</i></main>
 ```
 
-This is much more simpler.
+This is much simpler.
 
 Here is another example. It computes the greatest common divisor of two user inputs (only shows the `<body>` part for simpliciy):
 ```html
