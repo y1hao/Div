@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en-NZ">
+    <head>
+        <meta charset="utf8">
+        <title>The div Programming Language</title>
+        <style>
+            html {
+                font-family: sans-serif;
+                background-color: #eee;
+            }
+            h1 {
+                text-align: center;
+                margin: auto;
+                margin-top: 1em;
+                color: skyblue;
+                font-weight: lighter;
+                font-size: 3.5em;
+                text-shadow: #ccc 0 0 5px;
+            }
+            strong {
+                font-weight: bold;
+                text-shadow: #ccc 0 0 10px;
+                color: rgba(255, 136, 0, 0.822);
+            }
+            iframe {
+                display: block;
+                width: 90%;
+                margin: auto;
+                margin-top: 5em;
+                margin-bottom: 5em;
+                background-color: white;
+                border: none;
+                border-radius: 2em;
+                padding: 2em;
+            }
+            button {
+                padding: 0.5em;
+                border: none;
+                border-radius: 0.5em;
+                background-color: skyblue;
+                color: white;
+            }
+            button:hover {
+                box-shadow: #ccc 5px 5px 5px;
+            }
+            button:active {
+                transform: scale(0.9)
+            }
+            label {
+                color: skyblue;
+            }
+            .container {
+                width: 80%;
+                margin: auto;
+            }
+            .control {
+                margin-top: 5em;
+                margin-bottom: 5em;
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>The <strong>div</strong> Programming Language</h1>
+        <div class="container">
+            <div class="control">
+                <label>
+                    Example: 
+                    <select name="example" id="example">
+                        <option value="helloworld">Hello World</option>
+                        <option value="helloworld-div">Hello World(using only divs)</option>
+                        <option value="loveyou365">Love You 365</option>
+                        <option value="gcd">Greatest Common Divisor</option>
+                        <option value="gcd-div">Greatest Common Divisor(using only divs)</option>
+                        <option value="factorial">Factorial</option>
+                        <option value="fibonacci">Fibonacci</option>
+                        <option value="primes">Primes</option>
+                    </select>
+                </label>
+                <button id="button">View source code</button>
+            </div>
+            <iframe src="./examples/helloworld.html" id="demo"></iframe>
+        </div>
+        <script>
+            const demo = document.getElementById('demo');
+            const example = document.getElementById('example');
+            const button = document.getElementById('button');
+            example.addEventListener('change', (e) => {
+                demo.src = `./examples/${e.target.value}.html`
+            })
+            button.addEventListener('click', () => {
+                window.open(`https://github.com/CoderYihaoWang/Div/tree/master/examples/${example.value}.html`, '_blank')
+            })
+        </script>
+    </body>
+</html>
