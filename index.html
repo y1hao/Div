@@ -79,20 +79,27 @@
                         <option value="primes">Primes</option>
                     </select>
                 </label>
-                <button id="button">View source code</button>
+                <div>
+                    <button class="button" id="code">View source code</button>
+                    <button class="button" id="doc">View documentation</button>
+                </div>
             </div>
             <iframe src="./examples/helloworld.html" id="demo"></iframe>
         </div>
         <script>
             const demo = document.getElementById('demo');
             const example = document.getElementById('example');
-            const button = document.getElementById('button');
+            const code = document.getElementById('code');
+            const doc = document.getElementById('doc')
             example.addEventListener('change', (e) => {
                 demo.src = `./examples/${e.target.value}.html`
-            })
-            button.addEventListener('click', () => {
-                window.open(`https://github.com/CoderYihaoWang/Div/tree/master/examples/${example.value}.html`, '_blank')
-            })
+            });
+            code.addEventListener('click', () => {
+                window.open(`https://github.com/CoderYihaoWang/Div/tree/master/examples/${example.value}.html`, '_blank');
+            });
+            doc.addEventListener('click', () => {
+                window.open(`https://github.com/CoderYihaoWang/Div`, '_blank');
+            });
         </script>
     </body>
 </html>
