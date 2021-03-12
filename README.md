@@ -5,10 +5,10 @@ People keep saying that html is a **markup** language, not a **programing** lang
 
 The **div Programing Languange** is an experiment which aims to illustrate the expressiveness of html. The so called div language is just a piece of js code which works as an interpreter. When you add this piece of code to an html5 file, it totally changes the semantics of all elements in the document, and turns the html file to a functional, lisp-like language.
 
-The js file is currently hosted on [CodePen](https://codepen.io/YihaoWang/pen/mdJqzyd), all you need to do is to add this tag to the `<head>` part of your html file:
+To use Div, all you need to do is to add `div.js` to the `<head>` part of your html file, for example, if you download `div.js` file to the same level of the html file, then just add this line: 
 
 ```html
-<script src="https://codepen.io/YihaoWang/pen/mdJqzyd.js"></script>
+<script src="./div.js"></script>
 ```
 And now you can write programs directly with the html `<div>`s.
 
@@ -18,7 +18,7 @@ Here is the hello world example:
 <html>
     <head>
         <title>hello world</title>
-        <script src="https://codepen.io/YihaoWang/pen/mdJqzyd.js"></script>
+        <script src="./div.js"></script>
     </head>
     <body>
         <div class="out">
